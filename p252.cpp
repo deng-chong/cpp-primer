@@ -66,6 +66,3 @@ void Window_mgr::clear(ScreenIdx idx) {
     //for (char &ch:screens[idx].contents) ch = ' ';
 }
 
-int main() {
-
-}
