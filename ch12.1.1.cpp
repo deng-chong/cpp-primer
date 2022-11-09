@@ -13,18 +13,6 @@
 using namespace std;
 
 
-template<class T>
-class Blob {
-public:
-    Blob(const vector<T>& v={}) { ptr = make_shared<vector<T>>(v); }
-    T& front() { return ptr->front(); }
-    const T& front() const { return ptr->front(); }
-    void push_back(const T& x) { ptr->push_back(x); }
-    void show() const { for (auto &x:*ptr) cout << x << " "; cout << endl; }
-private:
-    shared_ptr<vector<T>> ptr;
-};
-
 template <class T>
 class SharedPtr {
 public:
