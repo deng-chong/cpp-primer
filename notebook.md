@@ -31,8 +31,8 @@ int f(int* const); // 重复声明 int f(int*)
 int f(int&);       // 函数作用于int变量的引用
 int f(const int&); // 新函数，作用于常量引用
 
-int f(int*);            // 新函数，作用于int变量的指针
-int f(const int*);      // 新函数，作用于const int变量的指针
-int f(int* const);      // 重复声明 int f(int*)
-int f(const int* const) // 重复声明 int f(const int*)
+int f(int*);             // 新函数，作用于int变量的指针
+int f(const int*);       // 新函数，作用于const int变量的指针
+int f(int* const);       // 重复声明 int f(int*)
+int f(const int* const); // 重复声明 int f(const int*)
 ```
