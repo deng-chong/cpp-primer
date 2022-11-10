@@ -23,7 +23,7 @@ public:
         cnt = new size_t(1);
     }
     SharedPtr(const SharedPtr<T>& one) {
-        cout << "constructor\n";
+        cout << "construct\n";
         if (ptr != one.ptr) {
             if (ptr) destroy();
             if (one.ptr) {
