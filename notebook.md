@@ -1,4 +1,4 @@
-### 1. 类的const成员函数返回值可以是非const的引用，只要这个引用的对象不是const即可。
+### 1. 类的const成员函数返回值可以是非const的引用，只要它引用的对象不是const即可。
 ```cpp
 class A {
 public:
@@ -15,4 +15,24 @@ public:
 private:
      int *p = nullptr;
 };
+```
+
+### 2. 重载和const形参(c++ primer p208)
+拥有顶层const的形参无法和另一个没有顶层const的形参区分开来
+```cpp
+int f(int);
+int f(const int); // 重复声明 int f(int)
+
+int f(int*);
+int f(int* const); // 重复声明 int f(int*)
+```
+如果形参是指针或引用，则通过区分其指向的是常量对象还是非常量对象，可以实现函数重载，此时const是底层的
+```
+int f(int&);       // 函数作用于int变量的引用
+int f(const int&); // 新函数，作用于常量引用
+
+int f(int*);            // 新函数，作用于int变量的指针
+int f(const int*);      // 新函数，作用于const int变量的指针
+int f(int* const);      // 重复声明 int f(int*)
+int f(const int* const) // 重复声明 int f(const int*)
 ```
