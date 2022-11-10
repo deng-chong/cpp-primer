@@ -1,1 +1,1 @@
-Some codes about the context of and exercise in cpp-primer
+Some codes about the context of and exercises in cpp-primer
