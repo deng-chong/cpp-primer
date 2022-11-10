@@ -27,6 +27,7 @@ int f(int*);
 int f(int* const); // 重复声明 int f(int*)
 ```
 如果形参是指针或引用，则通过区分其指向的是常量对象还是非常量对象，可以实现函数重载，此时const是底层的
+
 ```
 int f(int&);       // 函数作用于int变量的引用
 int f(const int&); // 新函数，作用于常量引用
