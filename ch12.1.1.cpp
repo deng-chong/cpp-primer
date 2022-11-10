@@ -17,7 +17,7 @@ template <class T>
 class SharedPtr {
 public:
     SharedPtr() = default;
-    SharedPtr(T x) {
+    explicit SharedPtr(T x) { // explicit: avoid implicit conversion
         cout << "val " << x << " memory successfully allocated\n";
         ptr = new T(x);
         cnt = new size_t(1);
