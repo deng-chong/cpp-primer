@@ -26,7 +26,7 @@ int f(const int); // 重复声明 int f(int)
 int f(int*);
 int f(int* const); // 重复声明 int f(int*)
 ```
-如果形参是指针或引用，则通过区分其指向的是常量对象还是非常量对象，可以实现函数重载，此时const是底层的
+如果形参是指针或引用，则通过区分其指向的是常量对象还是非常量对象（而不管其本身是不是const），可以实现函数重载，此时const是底层的
 ```cpp
 int f(int&);       // 函数作用于int变量的引用
 int f(const int&); // 新函数，作用于常量引用
@@ -36,3 +36,4 @@ int f(const int*);       // 新函数，作用于const int变量的指针
 int f(int* const);       // 重复声明 int f(int*)
 int f(const int* const); // 重复声明 int f(const int*)
 ```
+一个结论是 (1)int (2)int& (3)const int (4)const int& 中，只有(2)和(4)可以进行函数重载！
