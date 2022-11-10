@@ -18,7 +18,8 @@ class SharedPtr {
 public:
     SharedPtr() = default;
     explicit SharedPtr(T x) { // explicit: avoid implicit conversion
-        cout << "val " << x << " memory successfully allocated\n";
+        cout // << "val " << x << " "
+            << "memory successfully allocated\n";
         ptr = new T(x);
         cnt = new size_t(1);
     }
@@ -62,7 +63,8 @@ private:
         assert(ptr && cnt && *cnt || !ptr && !cnt);
         cout << "function destroy called\n";
         if (!ptr) return;
-        cout << "val " << *ptr << " cnt " << *cnt << " reference count decreased\n";
+        cout // << "val " << *ptr << " cnt " << *cnt << " "
+            << "reference count decreased\n";
         --*cnt;
         if (!*cnt) {
             cout << "memory successfully freed\n";
