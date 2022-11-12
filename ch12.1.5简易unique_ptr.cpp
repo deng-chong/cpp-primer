@@ -32,7 +32,7 @@ public:
     void show() const { if (ptr) for (auto x:*ptr) cout << x << " "; cout << endl; }
     ~UniquePtr() { if (ptr) delete ptr; }
 private:
-    T *ptr;
+    T *ptr = nullptr;
 };
 
 template<class T>
