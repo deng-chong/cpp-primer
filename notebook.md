@@ -22,7 +22,7 @@ int f(const int* const); // 重复声明 int f(const int*)
 - 做实参时，int变量与int&变量完全相同，const int变量和const int&变量完全相同。
 - 字面值、const int变量、const int&变量均不能做f(int&)的实参。
 - 字面值与f(int)和f(const int&)匹配；int变量与f(int)、f(int&)和f(const int&)匹配；const int变量和f(int)和f(const int&)匹配。
-- f(int&)和f(const int&)，后者的const是底层const，不构成重复定义；int（和int&）变量优先和f(int&)匹配，若不存在，可以和f(const int&)匹配\[再啰嗦一下，由以上知const int（和const int&）变量只能与f(const int&)匹配\]。
+- f(int&)和f(const int&)：后者的const是底层const，不构成重复定义；int（和int&）变量优先和f(int&)匹配，若不存在，可以和f(const int&)匹配\[再啰嗦一下，由以上知const int（和const int&）变量只能与f(const int&)匹配\]。
 
 ### 2. 类的const成员函数返回值可以是非const的引用，只要它引用的对象不是const即可。
 ```cpp
