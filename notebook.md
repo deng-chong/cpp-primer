@@ -39,6 +39,7 @@ int f(const int* const); // 重复声明 int f(const int*)
 
 ### 3. int, const int, int &, const int &的重载
 $$
+\begin{table}
 \begin{tabular}{l|ccccc}
 \hline \hline
  & $f$(0) & $f$(i) & $f$(ci) & $f$(ri) & $f$(rci) \\
@@ -56,4 +57,5 @@ $f$(int\&)--$f$(const int\&) & 4 & 3 & 4 & 3 & 4\\
 $f$(int)--$f$(int\&)--$f$(const int\&) & A & A & A & A & A\\
 \hline 
 \end{tabular}
+\end{table}
 $$
