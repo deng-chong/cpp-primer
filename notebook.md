@@ -24,6 +24,25 @@ int f(const int* const); // 重复声明 int f(const int*)
 - 字面值与f(int)和f(const int&)匹配；int变量与f(int)、f(int&)和f(const int&)匹配；const int变量和f(int)和f(const int&)匹配。
 - f(int&)和f(const int&)：后者的const是底层const，不构成重复定义；int（和int&）变量优先和f(int&)匹配，若不存在，可以和f(const int&)匹配\[再啰嗦一下，由以上知const int（和const int&）变量只能与f(const int&)匹配\]。
 
+```cpp
+int f(int) { return 1; }
+//int f(const int) { return 2; }
+int f(int&) { return 3; }
+//int f(const int&) { return 4; }
+
+int main() {
+    int i = 0;
+    int &ri = i;
+    const int ci = 0;
+    const int& rci = ci;
+    std::cout << f(0);
+    return 0;
+}
+```
+![image](https://user-images.githubusercontent.com/69671764/201475805-5c5aebfe-bcac-48c7-9051-679c83382c76.png)
+其中：R表示redefinition，A表示ambiguous call，$\times$表示无匹配函数
+
+
 ### 2. 类的const成员函数返回值可以是非const的引用，只要它引用的对象不是const即可。
 ```cpp
 class A {
