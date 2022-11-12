@@ -36,6 +36,22 @@ int f(const int*);       // 新函数，作用于const int变量的指针
 int f(int* const);       // 重复声明 int f(int*)
 int f(const int* const); // 重复声明 int f(const int*)
 ```
-- 在 `(1)int (2)int& (3)const int (4)const int&` 中，只有`(2)`和`(4)`可以进行函数重载！（`int`换成其他类型也一样。）
-推断：对象和它的引用是区分不开、不能重载的！
-- 在`(1)int* (2)const int* (3)int* const (4)const int* const` 中，只有`(1)`与`(3)`、`(2)`与`(4)`**不能重载**，因为这两对都仅是顶层const不一样。
+
+### 3. int, const int, int &, const int &的重载
+\begin{tabular}{l|ccccc}
+\hline \hline
+ & $f$(0) & $f$(i) & $f$(ci) & $f$(ri) & $f$(rci) \\
+\hline
+$f$(int) & 1 & 1 & 1 & 1 & 1\\
+$f$(const int) & 2 & 2 & 2 & 2 & 2\\
+$f$(int\&) & $\times$ & 3 & $\times$ & 3 & $\times$\\
+$f$(const int\&) & 4 & 4 & 4 & 4 & 4\\
+$f$(int)--$f$(const int) & R & R & R & R & R\\
+$f$(int)--$f$(int\&) & 1 & A & 1 & A & 1\\
+$f$(int)--$f$(const int\&) & A & A & A & A & A\\
+$f$(const int)--$f$(int\&) & 2 & A & 2 & A & 2\\
+$f$(const int)--$f$(const int\&) & A & A & A & A & A\\
+$f$(int\&)--$f$(const int\&) & 4 & 3 & 4 & 3 & 4\\
+$f$(int)--$f$(int\&)--$f$(const int\&) & A & A & A & A & A\\
+\hline 
+\end{tabular}
