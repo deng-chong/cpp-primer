@@ -1,23 +1,4 @@
-### 1. 类的const成员函数返回值可以是非const的引用，只要它引用的对象不是const即可。
-```cpp
-class A {
-public:
-    int &get() const { return val;} // 编译通过，运行错误！
-private:
-    int val = 0;
-};
-
-class B {
-public:
-     B(){ p = new int(0); }
-     int &get() const { return *p; } // p是const，但*p不是const，所以没有问题
-     ~B(){ if (p) delete p; }
-private:
-     int *p = nullptr;
-};
-```
-
-### 2. 重载和const形参(c++ primer p208)
+### 1. 重载和const形参(c++ primer p208)
 拥有顶层const的形参无法和另一个没有顶层const的形参区分开来
 ```cpp
 int f(int);
@@ -37,25 +18,30 @@ int f(int* const);       // 重复声明 int f(int*)
 int f(const int* const); // 重复声明 int f(const int*)
 ```
 
-### 3. int, const int, int &, const int &的重载
-$$
-\begin{table}
-\begin{tabular}{l|ccccc}
-\hline \hline
- & $f$(0) & $f$(i) & $f$(ci) & $f$(ri) & $f$(rci) \\
-\hline
-$f$(int) & 1 & 1 & 1 & 1 & 1\\
-$f$(const int) & 2 & 2 & 2 & 2 & 2\\
-$f$(int\&) & $\times$ & 3 & $\times$ & 3 & $\times$\\
-$f$(const int\&) & 4 & 4 & 4 & 4 & 4\\
-$f$(int)--$f$(const int) & R & R & R & R & R\\
-$f$(int)--$f$(int\&) & 1 & A & 1 & A & 1\\
-$f$(int)--$f$(const int\&) & A & A & A & A & A\\
-$f$(const int)--$f$(int\&) & 2 & A & 2 & A & 2\\
-$f$(const int)--$f$(const int\&) & A & A & A & A & A\\
-$f$(int\&)--$f$(const int\&) & 4 & 3 & 4 & 3 & 4\\
-$f$(int)--$f$(int\&)--$f$(const int\&) & A & A & A & A & A\\
-\hline 
-\end{tabular}
-\end{table}
-$$
+- 重载函数时**顶层**const会被忽略，f(const int)会被编译成f(int)。
+- 做实参时，int变量与int&变量完全相同，const int变量和const int&变量完全相同。
+- 字面值、const int变量、const int&变量均不能做f(int&)的实参。
+- 字面值与f(int)和f(const int&)匹配；int变量与f(int)、f(int&)和f(const int&)匹配；const int变量和f(int)和f(const int&)匹配。
+- f(int&)和f(const int&)，后者的const是底层const，不构成重复定义；int（和int&）变量优先和f(int&)匹配，若不存在，可以和f(const int&)匹配\[再啰嗦一下，由以上知const int（和const int&）变量只能与f(const int&)匹配\]。
+
+### 2. 类的const成员函数返回值可以是非const的引用，只要它引用的对象不是const即可。
+```cpp
+class A {
+public:
+    int &get() const { return val;} // 编译通过，运行错误！
+private:
+    int val = 0;
+};
+
+class B {
+public:
+     B(){ p = new int(0); }
+     int &get() const { return *p; } // p是const，但*p不是const，所以没有问题
+     ~B(){ if (p) delete p; }
+private:
+     int *p = nullptr;
+};
+```
+
+
+
