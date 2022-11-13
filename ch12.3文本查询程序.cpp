@@ -48,6 +48,7 @@ public:
         if (!lines) {
             cout << "String " << sought << " not found in the text.";
         } else {
+            cout << "\"" << sought << "\" occurs " << (*lines).size() << " time" << ((*lines).size()>1?"s":"") << "." << endl;
             for (auto num:*lines) 
                 cout << "Line " << num+1 << ": " << (*text)[num] << endl;
         }
@@ -67,6 +68,6 @@ QueryResult TextQuery::query(const string& sought) const {
 int main() {
     ifstream ifs("news.txt");
     TextQuery tq(ifs);
-    QueryResult qr = tq.query("Trump");
+    QueryResult qr = tq.query("Friday");
     qr.show();
 }
