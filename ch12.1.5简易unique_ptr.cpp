@@ -9,8 +9,8 @@ class UniquePtr {
     friend void swap(UniquePtr& lhs, UniquePtr& rhs) { std::swap(lhs.ptr, rhs.ptr); }
 public:
     UniquePtr() = default; // default constructor
-    explicit UniquePtr(T* p): ptr(p) {}
-    explicit UniquePtr(const T& one): ptr(new T(one)) {}
+    UniquePtr(T* p): ptr(p) {}
+    UniquePtr(const T& one): ptr(new T(one)) {}
     UniquePtr(const UniquePtr&) = delete; // copy constructor not permitted
     UniquePtr& operator=(const UniquePtr&) = delete; // copy assignment not permitted
     UniquePtr(UniquePtr&& one): ptr(one.ptr) { one.ptr = nullptr; } // move constructor
