@@ -26,21 +26,22 @@ public:
     }
     B& operator=(const B& rhs) { 
         //*ptr = *rhs.ptr; // does not work since copy assignment of class A is deleted
-        B tmp(rhs);              // (1)生成临时对象
-        if (ptr) delete ptr;     // (2)释放旧内存
-        std::swap(ptr, tmp.ptr); // (3)拷贝数据到本对象
-        return *this;            // (4)返回本对象
+        if (this != &rhs) {
+            B tmp(rhs);
+            std::swap(ptr, tmp.ptr); 
+        }
+        return *this;
     }
     A& operator*() { return *ptr; }
     A* operator->() { return ptr; }
-    ~B() { if (ptr) delete ptr; }
+    ~B() { if (ptr) delete ptr, ptr = nullptr; }
 private:
     A *ptr = nullptr;
 };
 
 int main() {
     A a;
-    B b(a), c;
+    B b(a), c(b);
     c = b;
     cout << a.get() << " " << b->get() << " " << c->get() << endl; // 0 0 0
     a.set(1).set(2);
