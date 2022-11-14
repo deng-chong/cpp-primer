@@ -1,0 +1,50 @@
+#include<iostream>
+using namespace std;
+
+class A {//copy constructor and copy assignment are deleted
+public:
+    A() = default;
+    A(int x): val(x) {}
+    A(const A&) = delete;
+    A& operator=(const A&) = delete;
+    int get() const { return val; }
+    A& set(int x) { val = x; return *this; }
+private:
+    int val = 0;
+};
+
+class B {//class that act like values
+public:
+    B() = default;
+    B(const A& a) {
+        //ptr = new A(a); // does not work since copy constructor of A is deleted
+        ptr = new A(a.get());
+    }
+    B(const B& rhs) {
+        //ptr = new A(*rhs.ptr); // does not work since copy constructor of A is deleted
+        ptr = new A((*rhs.ptr).get());
+    }
+    B& operator=(const B& rhs) { 
+        //*ptr = *rhs.ptr; // does not work since copy assignment of class A is deleted
+        B tmp(rhs);              // (1)生成临时对象
+        if (ptr) delete ptr;     // (2)释放旧内存
+        std::swap(ptr, tmp.ptr); // (3)拷贝数据到本对象
+        return *this;            // (4)返回本对象
+    }
+    A& operator*() { return *ptr; }
+    A* operator->() { return ptr; }
+    ~B() { if (ptr) delete ptr; }
+private:
+    A *ptr = nullptr;
+};
+
+int main() {
+    A a;
+    B b(a), c;
+    c = b;
+    cout << a.get() << " " << b->get() << " " << c->get() << endl; // 0 0 0
+    a.set(1).set(2);
+    b->set(2).set(3);
+    c->set(3).set(4);
+    cout << a.get() << " " << b->get() << " " << c->get() << endl; // 2 3 4
+}
