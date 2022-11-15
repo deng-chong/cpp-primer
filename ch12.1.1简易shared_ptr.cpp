@@ -56,8 +56,8 @@ public:
     }
 
 private:
-    T* ptr = nullptr;
-    size_t* cnt = nullptr;
+    T *ptr = nullptr;
+    size_t *cnt = nullptr;
 
     void destroy() {
         assert(ptr && cnt && *cnt || !ptr && !cnt);
