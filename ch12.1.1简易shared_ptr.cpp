@@ -62,8 +62,7 @@ private:
         if (!ptr) return;
         cout // << "val " << *ptr << " cnt " << *cnt << " "
             << "reference count decreased\n";
-        --*cnt;
-        if (!*cnt) {
+        if (--*cnt == 0) {
             cout << "memory successfully freed\n";
             delete ptr;
             delete cnt;
