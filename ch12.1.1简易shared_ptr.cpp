@@ -25,13 +25,10 @@ public:
     }
     SharedPtr(const SharedPtr<T>& one) {
         cout << "construct\n";
-        if (ptr != one.ptr) {
-            if (ptr) destroy();
-            if (one.ptr) {
-                ptr = one.ptr;
-                cnt = one.cnt;
-                ++*cnt;
-            }
+        if (one.ptr) {
+            ptr = one.ptr;
+            cnt = one.cnt;
+            ++*cnt;
         }
         cout << "constuct done\n";
     }
