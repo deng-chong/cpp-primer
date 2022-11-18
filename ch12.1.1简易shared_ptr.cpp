@@ -36,8 +36,8 @@ public:
         cout << "assign\n";
         if (this != &rhs) {
             auto tmp(rhs);
-            std::swap(ptr, one.ptr);
-            std::swap(cnt, one.cnt);
+            std::swap(ptr, tmp.ptr);
+            std::swap(cnt, tmp.cnt);
         }
         cout << "assign done\n";
         return *this;
