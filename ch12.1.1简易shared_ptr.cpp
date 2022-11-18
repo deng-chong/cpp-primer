@@ -32,15 +32,12 @@ public:
         }
         cout << "constuct done\n";
     }
-    SharedPtr& operator=(const SharedPtr<T>& one) {
+    SharedPtr& operator=(const SharedPtr<T>& rhs) {
         cout << "assign\n";
-        if (ptr != one.ptr) {
-            if (ptr) destroy();
-            if (one.ptr) {
-                ptr = one.ptr;
-                cnt = one.cnt;
-                ++*cnt;
-            }
+        if (this != &rhs) {
+            auto tmp(rhs);
+            std::swap(ptr, one.ptr);
+            std::swap(cnt, one.cnt);
         }
         cout << "assign done\n";
         return *this;
