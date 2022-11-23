@@ -125,6 +125,7 @@ template<typename T>
 Vector<T>& Vector<T>::operator=(Vector<T>&& rhs) noexcept {
     if (this != &rhs) {
         auto tmp(std::move(rhs));
+        rhs.beg = rhs.end = rhs.cap = nullptr; // 使rhs析构安全
         swap(tmp);
     }
     return *this;
