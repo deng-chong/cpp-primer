@@ -14,7 +14,7 @@ public:
     UniquePtr(const UniquePtr&) = delete; // copy constructor not permitted
     UniquePtr& operator=(const UniquePtr&) = delete; // copy assignment not permitted
     UniquePtr(UniquePtr&& one): ptr(one.ptr) { one.ptr = nullptr; } // move constructor
-    UniquePtr& operator=(UniquePtr&& one) { ptr = one.ptr, one.ptr = nullptr; }
+    UniquePtr& operator=(UniquePtr&& one) { ptr = one.ptr, one.ptr = nullptr; return *this; }
     
     T& operator*() { return *ptr; }
     T* operator->() { return ptr; }
