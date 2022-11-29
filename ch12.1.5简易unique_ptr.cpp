@@ -13,15 +13,21 @@ public:
     UniquePtr(const T& one): ptr(new T(one)) {}
     UniquePtr(const UniquePtr&) = delete; // copy constructor not permitted
     UniquePtr& operator=(const UniquePtr&) = delete; // copy assignment not permitted
-    UniquePtr(UniquePtr&& one): ptr(one.ptr) { one.ptr = nullptr; } // move constructor
-    UniquePtr& operator=(UniquePtr&& one) { ptr = one.ptr, one.ptr = nullptr; return *this; }
+    UniquePtr(UniquePtr&& one) noexcept: ptr(one.ptr) { one.ptr = nullptr; } // move constructor
+    UniquePtr& operator=(UniquePtr&& one) noexcept {
+        if (this != &one) {
+            ptr = one.ptr;
+            one.ptr = nullptr;
+        }
+        return *this;
+    }
     
-    T& operator*() { return *ptr; }
-    T* operator->() { return ptr; }
-    T* get() { return ptr; }
+    T& operator*() const noexcept { return *ptr; }
+    T* operator->() const noexcept { return ptr; }
+    T* get() const noexcept { return ptr; }
     void swap(UniquePtr& one) { std::swap(ptr, one.ptr); }
-    void reset(T* p = nullptr) {
-        if (ptr) delete ptr;
+    void reset(T *p = nullptr) {
+        delete ptr;
         ptr = p;
     }
     T* release() {
