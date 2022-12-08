@@ -13,6 +13,10 @@
 #include "OrQuery.h"
 #include "NotQuery.h"
 
+//g++ -std=c++17 -c -o QueryResult.o QueryResult.cpp
+//g++ -std=c++17 -c -o TextQuery.o TextQuery.cpp
+//g++ -std=c++17 -c -o test.o test.cpp
+//g++ -std=c++17 -o test test.o TextQuery.o QueryResult.o
 
 int main() {
     std::ifstream ifs("news.txt");
