@@ -1,6 +1,8 @@
 #include<memory>
 #include<iostream>
 #include<string>
+#include<vector>
+#include<list>
 #include<utility>
 
 template<typename T>
@@ -59,7 +61,7 @@ public:
     void shrink_to_fit() { reallocate(size()); }
 
     void assign(std::size_t , const T&);
-    void assign(T* , T*);
+    template<typename It> void assign(It, It);
     void assign(std::initializer_list<T>);
     void push_back(const T&);
     void push_back(T&&);
@@ -148,9 +150,9 @@ void Vector<T>::assign(std::size_t n, const T& val) {
     }
 }
     
-
 template<typename T>
-void Vector<T>::assign(T* first, T* last) {
+template<typename It>
+void Vector<T>::assign(It first, It last) {
     std::size_t n = 0;
     for (auto p = first; p != last; ++p) ++n;
     if (size() < n) {
@@ -205,11 +207,7 @@ void Vector<T>::push_back(T&& val) {
 
 template<typename T>
 void Vector<T>::emplace_back(T&& val) {
-    if (end == cap) {
-        auto new_sz = beg == end ? 1 : 2 * (end - beg);
-        reallocate(new_sz);
-    }
-    alloc.construct(end++, std::move(val));
+    push_back(std::move(val));
 }
 
 template<typename T>
@@ -243,5 +241,12 @@ int main() {
     v.insert(v.End(), 0);
     v.erase(v.begin());
     v.erase(v.begin() + 2);
-    std::cout << v;
+    std::cout << v << "\n";
+
+    std::list<int> lst{1,2,3,9999};
+    v.assign(lst.begin(), lst.end());
+    std::cout << v << "\n";
+
+    Vector<Vector<int>> vv{{1,2},{2,3}};
+    std::cout << vv;
 }
