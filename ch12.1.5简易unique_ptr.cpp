@@ -42,7 +42,8 @@ private:
     D del;
 };
 
-void swap(UniquePtr& lhs, UniquePtr& rhs) { lhs.swap(rhs); }
+template<typename T, typename D = std::default_delete<T>>
+void swap(UniquePtr<T, D>& lhs, UniquePtr<T, D>& rhs) { lhs.swap(rhs); }
 
 class Deleter {
 public:
