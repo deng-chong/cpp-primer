@@ -33,6 +33,7 @@ public:
     void swap(UniquePtr& one) { std::swap(ptr, one.ptr); std::swap(del, one.del); }
     
     void reset(T *p = nullptr) {
+    	if (p == ptr) return;
         del(ptr);
         ptr = p;
     }
