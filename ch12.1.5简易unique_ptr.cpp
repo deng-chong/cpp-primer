@@ -11,7 +11,7 @@ class UniquePtr {
 		std::swap(lhs.del, rhs.del);
 	}
 public:
-	UniquePtr(T *p = nullptr, D d = D()) : ptr(p), del(d) {}
+    UniquePtr(T *p = nullptr, D d = D()) : ptr(p), del(d) {}
     UniquePtr(const T& one): ptr(new T(one)) {}
     UniquePtr(const UniquePtr&) = delete; // copy constructor not permitted
     UniquePtr& operator=(const UniquePtr&) = delete; // copy assignment not permitted
