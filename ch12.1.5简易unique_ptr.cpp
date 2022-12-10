@@ -6,7 +6,6 @@ using namespace std;
 
 template<typename T, typename D = std::default_delete<T>>
 class UniquePtr {
-    friend void swap(UniquePtr& lhs, UniquePtr& rhs) { lhs.swap(rhs); }
 public:
     UniquePtr(T *p = nullptr, D d = D()) : ptr(p), del(d) {}
     UniquePtr(const T& one): ptr(new T(one)) {}
@@ -26,6 +25,7 @@ public:
     T* operator->() const noexcept { return ptr; }
     T* get() const noexcept { return ptr; }
     void swap(UniquePtr& one) { std::swap(ptr, one.ptr); std::swap(del, one.del); }
+    
     void reset(T *p = nullptr) {
         delete ptr;
         ptr = p;
@@ -41,6 +41,8 @@ private:
     T *ptr;
     D del;
 };
+
+void swap(UniquePtr& lhs, UniquePtr& rhs) { lhs.swap(rhs); }
 
 class Deleter {
 public:
