@@ -11,23 +11,29 @@ public:
     UniquePtr(const T& one): ptr(new T(one)) {}
     UniquePtr(const UniquePtr&) = delete; // copy constructor not permitted
     UniquePtr& operator=(const UniquePtr&) = delete; // copy assignment not permitted
-    UniquePtr(UniquePtr&& one) noexcept: ptr(one.ptr), del(std::move(one.del)) { one.ptr = nullptr; } // move constructor
+    UniquePtr(UniquePtr&& one) noexcept: 
+        ptr(std::move(one.ptr)), del(std::move(one.del)) { one.ptr = nullptr; } // move constructor
     UniquePtr& operator=(UniquePtr&& one) noexcept {
         if (this != &one) {
-            ptr = one.ptr;
+            del(ptr);
+            ptr = std::move(one.ptr);
+	        del = std::move(one.del);
             one.ptr = nullptr;
-	    del = std::move(one.del);
         }
         return *this;
     }
-    
-    T& operator*() const noexcept { return *ptr; }
-    T* operator->() const noexcept { return ptr; }
+
+    explicit operator bool() const { return ptr != nullptr; }
+    T& operator*() const noexcept { 
+        if(ptr == nullptr) throw std::runtime_error("no object!"); 
+        return *ptr; 
+    }
+    T* operator->() const noexcept { return &this->operator*(); }
     T* get() const noexcept { return ptr; }
     void swap(UniquePtr& one) { std::swap(ptr, one.ptr); std::swap(del, one.del); }
     
     void reset(T *p = nullptr) {
-        delete ptr;
+        del(ptr);
         ptr = p;
     }
     T* release() {
@@ -42,19 +48,20 @@ private:
     D del;
 };
 
-template<typename T, typename D = std::default_delete<T>>
+template<typename T, typename D>
 void swap(UniquePtr<T, D>& lhs, UniquePtr<T, D>& rhs) { lhs.swap(rhs); }
 
 class Deleter {
 public:
-    Deleter(std::ostream &s = std::cerr): os(s) {}
     template<typename T>
-    void operator()(T *p) const { os << "Deleting UniquePtr" << std::endl; delete p; p = nullptr; }
-private:
-    std::ostream &os;
+    void operator()(T *p) const { 
+        std::cout << "Deleting UniquePtr" << std::endl; 
+        delete p; 
+        p = nullptr; 
+    }
 };
 
-template<typename T, typename D = std::default_delete<T>>
+template<typename T, typename D>
 UniquePtr<T, D> f() {
     return UniquePtr<T, D>();
 }
@@ -66,6 +73,8 @@ int main() {
     p.reset(p1.release());
     p.show();
     p1.reset(p2.release());
+    p2.reset(p.release());
+    swap(p1, p2);
     p1.show();
     p2.show();
 }
