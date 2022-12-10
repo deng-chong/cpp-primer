@@ -7,9 +7,9 @@ using namespace std;
 template<typename T, typename D = std::default_delete<T>>
 class UniquePtr {
     friend void swap(UniquePtr& lhs, UniquePtr& rhs) {
-		std::swap(lhs.ptr, rhs.ptr);
-		std::swap(lhs.del, rhs.del);
-	}
+        std::swap(lhs.ptr, rhs.ptr);
+	std::swap(lhs.del, rhs.del);
+    }
 public:
     UniquePtr(T *p = nullptr, D d = D()) : ptr(p), del(d) {}
     UniquePtr(const T& one): ptr(new T(one)) {}
