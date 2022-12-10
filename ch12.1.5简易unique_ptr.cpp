@@ -17,7 +17,7 @@ public:
         if (this != &one) {
             ptr = one.ptr;
             one.ptr = nullptr;
-			del = std::move(one.del);
+	    del = std::move(one.del);
         }
         return *this;
     }
@@ -39,7 +39,7 @@ public:
     ~UniquePtr() { del(ptr); ptr = nullptr;}
 private:
     T *ptr;
-	D del;
+    D del;
 };
 
 class Deleter {
