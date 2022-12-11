@@ -8,16 +8,16 @@ template <typename T, typename D = std::default_delete<T>>
 class UniquePtr {
    public:
     template <typename U = T>
-    UniquePtr(U* p = nullptr, D d = D()) : ptr(p), del(d) {}
+    UniquePtr(U *p = nullptr, D d = D()) : ptr(p), del(d) {}
 
     template <typename U = T>
-    UniquePtr(const U& one) : ptr(new U(one)) {}
+    UniquePtr(const U &one) : ptr(new U(one)) {}
 
-    UniquePtr(const UniquePtr&) = delete;             // copy constructor not permitted
-    UniquePtr& operator=(const UniquePtr&) = delete;  // copy assignment not permitted
+    UniquePtr(const UniquePtr &) = delete;             // copy constructor not permitted
+    UniquePtr &operator=(const UniquePtr &) = delete;  // copy assignment not permitted
 
-    UniquePtr(UniquePtr&& one) noexcept : ptr(std::move(one.ptr)), del(std::move(one.del)) { one.ptr = nullptr; }  // move constructor
-    UniquePtr& operator=(UniquePtr&& one) noexcept {
+    UniquePtr(UniquePtr &&one) noexcept : ptr(std::move(one.ptr)), del(std::move(one.del)) { one.ptr = nullptr; }  // move constructor
+    UniquePtr &operator=(UniquePtr &&one) noexcept {
         if (this != &one) {
             del(ptr);
             ptr = std::move(one.ptr);
@@ -28,24 +28,24 @@ class UniquePtr {
     }
 
     explicit operator bool() const { return ptr != nullptr; }
-    T& operator*() const {
+    T &operator*() const {
         if (!ptr) throw std::runtime_error("no object!");
         return *ptr;
     }
-    T* operator->() const noexcept { return &this->operator*(); }
-    T* get() const noexcept { return ptr; }
-    void swap(UniquePtr& one) {
+    T *operator->() const noexcept { return &this->operator*(); }
+    T *get() const noexcept { return ptr; }
+    void swap(UniquePtr &one) {
         std::swap(ptr, one.ptr);
         std::swap(del, one.del);
     }
 
     template <typename U = T>
-    void reset(U* p = nullptr) {
+    void reset(U *p = nullptr) {
         if (p == ptr) return;
         del(ptr);
         ptr = p;
     }
-    T* release() {
+    T *release() {
         auto p = ptr;
         ptr = nullptr;
         return p;
@@ -58,24 +58,24 @@ class UniquePtr {
 
     void show() const {
         if (ptr) {
-            for (auto& x : *ptr)
+            for (auto &x : *ptr)
                 std::cout << x << " ";
             std::cout << std::endl;
         }
     }
 
    private:
-    T* ptr;
+    T *ptr;
     D del;
 };
 
 template <typename T, typename D>
-void swap(UniquePtr<T, D>& lhs, UniquePtr<T, D>& rhs) { lhs.swap(rhs); }
+void swap(UniquePtr<T, D> &lhs, UniquePtr<T, D> &rhs) { lhs.swap(rhs); }
 
 template <typename T>
 class Deleter {
    public:
-    void operator()(T* p) const {
+    void operator()(T *p) const {
         std::cout << "Deleting UniquePtr" << std::endl;
         delete p;
         p = nullptr;
@@ -106,14 +106,14 @@ class B : public A {
 };
 
 int main() {
-    A* pa = new A();
-    B* pb = new B();
+    A *pa = new A();
+    B *pb = new B();
     UniquePtr<A> spa(pa), spb(pb);
     spa->show();
     spb->show();
     spa.reset(spb.release());
     spa->show();
-    //spb->show();
+    // spb->show();
 
     vector<string> v1{"A", "B", "C"}, v2{"Book", "See", "Hi"};
     UniquePtr<vector<string>, Deleter<vector<string>>> p1(v1), p2(v2);
