@@ -1,39 +1,41 @@
-#include<iostream>
-#include<string>
-#include<vector>
-#include<memory>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 using namespace std;
 
-template<typename T, typename D = std::default_delete<T>>
+template <typename T, typename D = std::default_delete<T>>
 class UniquePtr {
-public:
-    UniquePtr(T *p = nullptr, D d = D()) : ptr(p), del(d) {}
-    UniquePtr(const T& one): ptr(new T(one)) {}
-    UniquePtr(const UniquePtr&) = delete; // copy constructor not permitted
-    UniquePtr& operator=(const UniquePtr&) = delete; // copy assignment not permitted
-    UniquePtr(UniquePtr&& one) noexcept: 
-        ptr(std::move(one.ptr)), del(std::move(one.del)) { one.ptr = nullptr; } // move constructor
+   public:
+    UniquePtr(T* p = nullptr, D d = D()) : ptr(p), del(d) {}
+    UniquePtr(const T& one) : ptr(new T(one)) {}
+    UniquePtr(const UniquePtr&) = delete;                                                                          // copy constructor not permitted
+    UniquePtr& operator=(const UniquePtr&) = delete;                                                               // copy assignment not permitted
+    UniquePtr(UniquePtr&& one) noexcept : ptr(std::move(one.ptr)), del(std::move(one.del)) { one.ptr = nullptr; }  // move constructor
     UniquePtr& operator=(UniquePtr&& one) noexcept {
         if (this != &one) {
             del(ptr);
             ptr = std::move(one.ptr);
-	        del = std::move(one.del);
+            del = std::move(one.del);
             one.ptr = nullptr;
         }
         return *this;
     }
 
     explicit operator bool() const { return ptr != nullptr; }
-    T& operator*() const noexcept { 
-        if(ptr == nullptr) throw std::runtime_error("no object!"); 
-        return *ptr; 
+    T& operator*() const {
+        if (!ptr) throw std::runtime_error("no object!");
+        return *ptr;
     }
     T* operator->() const noexcept { return &this->operator*(); }
     T* get() const noexcept { return ptr; }
-    void swap(UniquePtr& one) { std::swap(ptr, one.ptr); std::swap(del, one.del); }
-    
-    void reset(T *p = nullptr) {
-    	if (p == ptr) return;
+    void swap(UniquePtr& one) {
+        std::swap(ptr, one.ptr);
+        std::swap(del, one.del);
+    }
+
+    void reset(T* p = nullptr) {
+        if (p == ptr) return;
         del(ptr);
         ptr = p;
     }
@@ -42,30 +44,44 @@ public:
         ptr = nullptr;
         return p;
     }
-    void show() const { if (ptr) for (auto x:*ptr) cout << x << " "; cout << endl; }
-    ~UniquePtr() { del(ptr); ptr = nullptr;}
-private:
-    T *ptr;
+
+    ~UniquePtr() {
+        del(ptr);
+        ptr = nullptr;
+    }
+
+    void show() const {
+        if (ptr) {
+            for (auto& x : *ptr)
+                std::cout << x << " ";
+            std::cout << std::endl;
+        }
+    }
+
+   private:
+    T* ptr;
     D del;
 };
 
-template<typename T, typename D>
+template <typename T, typename D>
 void swap(UniquePtr<T, D>& lhs, UniquePtr<T, D>& rhs) { lhs.swap(rhs); }
 
 class Deleter {
-public:
-    template<typename T>
-    void operator()(T *p) const { 
-        std::cout << "Deleting UniquePtr" << std::endl; 
-        delete p; 
-        p = nullptr; 
+   public:
+    template <typename T>
+    void operator()(T* p) const {
+        std::cout << "Deleting UniquePtr" << std::endl;
+        delete p;
+        p = nullptr;
     }
 };
 
-template<typename T, typename D>
+template <typename T, typename D>
 UniquePtr<T, D> f() {
     return UniquePtr<T, D>();
 }
+
+template class UniquePtr<vector<string>>;
 
 int main() {
     vector<string> v1{"A", "B", "C"}, v2{"Book", "See", "Hi"};
