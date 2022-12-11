@@ -5,24 +5,22 @@
 
 template <typename T>
 class SharedPtr {
-    friend void swap(SharedPtr<T> &lhs, SharedPtr<T> &rhs) {
-        lhs.swap(rhs);
-    }
-
    public:
     // default deleter: nullptr (function pointer)
-    SharedPtr(T *p = nullptr, std::function<void(T *)> d = nullptr) : ptr(p), cnt(nullptr), del(d) {
-        if (ptr != nullptr)
+    template <typename U = T>
+    SharedPtr(U *p = nullptr, std::function<void(T *)> d = nullptr) : ptr(p), cnt(nullptr), del(d) {
+        if (ptr)
             cnt = new std::size_t(1);
     }
 
-    explicit SharedPtr(const T &x) {  // explicit: avoid implicit conversion
+    template <typename U = T>
+    explicit SharedPtr(const U &x) {  // explicit: avoid implicit conversion
         std::cout << "memory successfully allocated\n";
-        ptr = new T(x);
+        ptr = new U(x);
         cnt = new std::size_t(1);
     }
 
-    SharedPtr(const SharedPtr<T> &rhs) {
+    SharedPtr(const SharedPtr &rhs) {
         std::cout << "copy construct\n";
         ptr = rhs.ptr;
         cnt = rhs.cnt;
@@ -33,7 +31,7 @@ class SharedPtr {
         std::cout << "copy construct done\n";
     }
 
-    SharedPtr(SharedPtr<T> &&rhs) noexcept {
+    SharedPtr(SharedPtr &&rhs) noexcept {
         std::cout << "move construct\n";
         ptr = rhs.ptr;
         cnt = rhs.cnt;
@@ -45,7 +43,7 @@ class SharedPtr {
         std::cout << "move construct done\n";
     }
 
-    SharedPtr &operator=(const SharedPtr<T> &rhs) {
+    SharedPtr &operator=(const SharedPtr &rhs) {
         std::cout << "copy assign\n";
         if (this != &rhs) {
             if (ptr != rhs.ptr) {
@@ -61,7 +59,7 @@ class SharedPtr {
         return *this;
     }
 
-    SharedPtr &operator=(SharedPtr<T> &&rhs) {
+    SharedPtr &operator=(SharedPtr &&rhs) {
         std::cout << "move assign\n";
         if (this != &rhs) {
             if (ptr != rhs.ptr)
@@ -79,7 +77,7 @@ class SharedPtr {
 
     ~SharedPtr() { destroy(); }
 
-    void swap(SharedPtr<T> &rhs) {
+    void swap(SharedPtr &rhs) {
         std::swap(ptr, rhs.ptr);
         std::swap(cnt, rhs.cnt);
         std::swap(del, rhs.del);
@@ -97,7 +95,8 @@ class SharedPtr {
 
     T *get() const noexcept { return ptr; }
 
-    void reset(T *p = nullptr, std::function<void(T *)> d = nullptr) {
+    template <typename U = T>
+    void reset(U *p = nullptr, std::function<void(T *)> d = nullptr) {
         if (ptr != p) {
             destroy();
             ptr = p;
@@ -129,9 +128,37 @@ class SharedPtr {
     }
 };
 
-//template class SharedPtr<int>;
+template <typename T>
+void swap(SharedPtr<T> &lhs, SharedPtr<T> &rhs) {
+    lhs.swap(rhs);
+}
+
+class A {
+   public:
+    int a = 0;
+    virtual ~A() = default;
+    virtual void show() const {
+        std::cout << "A: " << a << "\n";
+    }
+};
+
+class B : public A {
+   public:
+    std::string s = "B";
+    virtual void show() const override {
+        std::cout << "B: " << a << " " << s << " "
+                  << "\n";
+    }
+};
 
 int main() {
+    A *pa = new A();
+    B *pb = new B();
+    SharedPtr<A> spa(pa), spb(pb);
+    spa = spb;
+    spa->show();
+    spb->show();
+
     SharedPtr<int> p(1);
     std::cout << "................" << std::endl;
     SharedPtr<int> q;
