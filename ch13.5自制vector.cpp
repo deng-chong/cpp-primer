@@ -1,17 +1,24 @@
-#include<memory>
-#include<iostream>
-#include<string>
-#include<vector>
-#include<list>
-#include<utility>
+#include <iostream>
+#include <list>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
-template<typename T>
+template <typename T>
 class Vector {
     friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
-        for (auto p = vec.beg; p != vec.end; ++p) os << *p << " ";
+        os << "[";
+        auto p = vec.beg;
+        if (p != vec.end) {
+            os << *p;
+            for (++p; p != vec.end; ++p) os << ", " << *p;
+        }
+        os << "]";
         return os;
     }
-private:
+
+   private:
     static std::allocator<T> alloc;
     T *beg = nullptr, *end = nullptr, *cap = nullptr;
     void reallocate(std::size_t n) {
@@ -33,9 +40,10 @@ private:
             beg = end = cap = nullptr;
         }
     }
-public:
+
+   public:
     Vector() = default;
-    Vector(std::size_t, const T& =T());
+    Vector(std::size_t, const T& = T());
     Vector(std::initializer_list<T>);
     Vector(const Vector<T>&);
     Vector(Vector<T>&&) noexcept;
@@ -46,7 +54,7 @@ public:
     bool empty() const noexcept { return beg == end; }
     std::size_t size() const noexcept { return end - beg; }
     std::size_t capacity() const noexcept { return cap - beg; }
-    void resize(std::size_t n, const T& val=T()) {
+    void resize(std::size_t n, const T& val = T()) {
         if (n <= size()) {
             end = beg + n;
         } else {
@@ -60,12 +68,14 @@ public:
     }
     void shrink_to_fit() { reallocate(size()); }
 
-    void assign(std::size_t , const T&);
-    template<typename It> void assign(It, It);
+    void assign(std::size_t, const T&);
+    template <typename It>
+    void assign(It, It);
     void assign(std::initializer_list<T>);
     void push_back(const T&);
     void push_back(T&&);
-    template <typename ... Args> void emplace_back(Args && ...);
+    template <typename... Args>
+    void emplace_back(Args&&...);
     void pop_back();
     void insert(T*, const T&);
     void erase(T*);
@@ -73,7 +83,7 @@ public:
     void clear() noexcept {
         while (end != beg) alloc.destroy(--end);
     }
-    
+
     T& operator[](std::size_t idx) { return *(beg + idx); }
     T& at(std::size_t idx) { return *(beg + idx); }
     T& front() { return *beg; }
@@ -81,40 +91,40 @@ public:
     T* data() { return beg; }
     T* begin() { return beg; }
     T* End() { return end; }
-    const T* data() const { return beg; } // const objects call this one
+    const T* data() const { return beg; }  // const objects call this one
 };
 
-template<typename T>
-std::allocator<T> Vector<T>::alloc; // static members need definition outside the class body
+template <typename T>
+std::allocator<T> Vector<T>::alloc;  // static members need definition outside the class body
 
-template<typename T>
+template <typename T>
 Vector<T>::Vector(std::size_t n, const T& val) {
     reallocate(n);
     std::uninitialized_fill_n(beg, n, val);
     end = beg + n;
 }
 
-template<typename T>
+template <typename T>
 Vector<T>::Vector(std::initializer_list<T> ilist) {
     reallocate(ilist.size());
     for (auto p = ilist.begin(); p != ilist.end(); ++p)
         alloc.construct(end++, *p);
 }
 
-template<typename T>
+template <typename T>
 Vector<T>::Vector(const Vector& rhs) {
     reallocate(rhs.size());
-    for (auto p = rhs.beg; p != rhs.end; ++p) 
+    for (auto p = rhs.beg; p != rhs.end; ++p)
         alloc.construct(end++, *p);
 }
 
-template<typename T>
+template <typename T>
 Vector<T>::Vector(Vector&& rhs) noexcept {
     beg = rhs.beg, end = rhs.end, cap = rhs.cap;
-    rhs.beg = rhs.end = rhs.cap = nullptr; // 使rhs析构安全
+    rhs.beg = rhs.end = rhs.cap = nullptr;  // 使rhs析构安全
 }
 
-template<typename T>
+template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector<T>& rhs) {
     if (this != &rhs) {
         auto tmp(rhs);
@@ -123,22 +133,22 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& rhs) {
     return *this;
 }
 
-template<typename T>
+template <typename T>
 Vector<T>& Vector<T>::operator=(Vector<T>&& rhs) noexcept {
     if (this != &rhs) {
         auto tmp(std::move(rhs));
-        rhs.beg = rhs.end = rhs.cap = nullptr; // 使rhs析构安全
+        rhs.beg = rhs.end = rhs.cap = nullptr;  // 使rhs析构安全
         swap(tmp);
     }
     return *this;
 }
 
-template<typename T>
+template <typename T>
 Vector<T>::~Vector() {
     free();
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::assign(std::size_t n, const T& val) {
     if (size() < n) {
         free();
@@ -149,9 +159,9 @@ void Vector<T>::assign(std::size_t n, const T& val) {
         for (end = beg; end != beg + n; ++end) *end = val;
     }
 }
-    
-template<typename T>
-template<typename It>
+
+template <typename T>
+template <typename It>
 void Vector<T>::assign(It first, It last) {
     std::size_t n = 0;
     for (auto p = first; p != last; ++p) ++n;
@@ -165,14 +175,14 @@ void Vector<T>::assign(It first, It last) {
     }
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::swap(Vector<T>& rhs) {
     std::swap(beg, rhs.beg);
     std::swap(end, rhs.end);
     std::swap(cap, rhs.cap);
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::assign(std::initializer_list<T> ilist) {
     std::size_t n = ilist.size();
     if (size() < n) {
@@ -187,7 +197,7 @@ void Vector<T>::assign(std::initializer_list<T> ilist) {
     }
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::push_back(const T& val) {
     if (end == cap) {
         auto new_sz = beg == end ? 1 : 2 * (end - beg);
@@ -196,7 +206,7 @@ void Vector<T>::push_back(const T& val) {
     alloc.construct(end++, val);
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::push_back(T&& val) {
     if (end == cap) {
         auto new_sz = beg == end ? 1 : 2 * (end - beg);
@@ -205,8 +215,9 @@ void Vector<T>::push_back(T&& val) {
     alloc.construct(end++, std::move(val));
 }
 
-template <typename ... Args> 
-void Vector<T>::emplace_back(Args && ... args) {
+template <typename T>
+template <typename... Args>
+void Vector<T>::emplace_back(Args&&... args) {
     if (end == cap) {
         auto new_sz = beg == end ? 1 : 2 * (end - beg);
         reallocate(new_sz);
@@ -214,12 +225,12 @@ void Vector<T>::emplace_back(Args && ... args) {
     alloc.construct(end++, std::forward<Args>(args)...);
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::pop_back() {
     alloc.destroy(--end);
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::insert(T* p, const T& val) {
     if (end == cap) {
         auto new_sz = beg == end ? 1 : 2 * (end - beg);
@@ -229,14 +240,17 @@ void Vector<T>::insert(T* p, const T& val) {
     for (auto q = end - 1; q != p; --q) std::swap(*q, *(q - 1));
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::erase(T* p) {
     while (p + 1 != end) std::swap(*p, *(p + 1)), ++p;
     alloc.destroy(--end);
 }
 
-
 int main() {
+    Vector<std::string> sv;
+    for (int i = 0; i < 5; ++i) sv.emplace_back(10, 'a' + i);
+    std::cout << sv << std::endl;
+
     Vector<int> v;
     for (int i = 0; i < 10; ++i) v.push_back(i);
     v.insert(v.begin(), -1);
@@ -247,10 +261,10 @@ int main() {
     v.erase(v.begin() + 2);
     std::cout << v << "\n";
 
-    std::list<int> lst{1,2,3,9999};
+    std::list<int> lst{1, 2, 3, 9999};
     v.assign(lst.begin(), lst.end());
     std::cout << v << "\n";
 
-    Vector<Vector<int>> vv{{1,2},{2,3}};
+    Vector<Vector<Vector<int>>> vv{{{1, 2}, {2, 3}, {3, 4}}, {{{11, 12}, {12, 13}, {13, 14}}}};
     std::cout << vv;
 }
