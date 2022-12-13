@@ -2,6 +2,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <string>
 
 template <typename T>
 class SharedPtr {
@@ -128,6 +129,11 @@ class SharedPtr {
     }
 };
 
+template <typename T, typename... Args>
+SharedPtr<T> makeShared(Args &&...args) {
+    return new T(std::forward<Args>(args)...);
+}
+
 template <typename T>
 void swap(SharedPtr<T> &lhs, SharedPtr<T> &rhs) {
     lhs.swap(rhs);
@@ -152,6 +158,9 @@ class B : public A {
 };
 
 int main() {
+    auto ptr = makeShared<std::string>(10, 'a');
+    std::cout << ptr.use_count() << " " << *ptr << std::endl;
+   
     A *pa = new A();
     B *pb = new B();
     SharedPtr<A> spa(pa), spb(pb);
