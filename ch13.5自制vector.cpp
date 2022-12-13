@@ -65,7 +65,7 @@ public:
     void assign(std::initializer_list<T>);
     void push_back(const T&);
     void push_back(T&&);
-    void emplace_back(T&&);
+    template <typename ... Args> void emplace_back(Args && ...);
     void pop_back();
     void insert(T*, const T&);
     void erase(T*);
@@ -203,6 +203,15 @@ void Vector<T>::push_back(T&& val) {
         reallocate(new_sz);
     }
     alloc.construct(end++, std::move(val));
+}
+
+template <typename ... Args> 
+void Vector<T>::emplace_back(Args && ... args) {
+    if (end == cap) {
+        auto new_sz = beg == end ? 1 : 2 * (end - beg);
+        reallocate(new_sz);
+    }
+    alloc.construct(end++, std::forward<T>(args)...);
 }
 
 template<typename T>
