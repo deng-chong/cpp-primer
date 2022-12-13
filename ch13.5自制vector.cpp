@@ -96,16 +96,16 @@ Vector<T>::Vector(std::size_t n, const T& val) {
 
 template<typename T>
 Vector<T>::Vector(std::initializer_list<T> ilist) {
-    std::size_t n = ilist.size();
-    reallocate(n);
-    auto p = ilist.begin();
-    for (end = beg; end != beg + n; ++end) alloc.construct(end, *p++);
+    reallocate(ilist.size());
+    for (auto p = ilist.begin(); p != ilist.end(); ++p)
+        alloc.construct(end++, *p);
 }
 
 template<typename T>
 Vector<T>::Vector(const Vector& rhs) {
     reallocate(rhs.size());
-    for (auto p = rhs.beg; p != rhs.end; ++p) alloc.construct(end++, *p);
+    for (auto p = rhs.beg; p != rhs.end; ++p) 
+        alloc.construct(end++, *p);
 }
 
 template<typename T>
