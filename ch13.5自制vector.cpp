@@ -215,11 +215,6 @@ void Vector<T>::emplace_back(Args && ... args) {
 }
 
 template<typename T>
-void Vector<T>::emplace_back(T&& val) {
-    push_back(std::move(val));
-}
-
-template<typename T>
 void Vector<T>::pop_back() {
     alloc.destroy(--end);
 }
