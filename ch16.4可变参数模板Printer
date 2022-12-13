@@ -6,12 +6,14 @@ class Printer {
    public:
     Printer(const std::string& _sep = " ", const std::string& _end = "\n") : sep(_sep), end(_end) {}
 
-    void set_separator(const std::string& _sep) {
+    Printer& set_separator(const std::string& _sep) {
         sep = _sep;
+        return *this;
     }
 
-    void set_end(const std::string& _end) {
+    Printer& set_end(const std::string& _end) {
         end = _end;
+        return *this;
     }
 
     template <typename... Args>
@@ -21,6 +23,8 @@ class Printer {
 
    private:
     std::string sep, end;
+
+    void _print() { std::cout << end; }
 
     template <typename T>
     void _print(const T& t) {
@@ -41,6 +45,5 @@ int main() {
     std::string t("bye");
     Printer pr;
     pr.print(a, b, s, t);
-    pr.set_separator(", ");
-    pr.print(a, b, s, t);
+    pr.set_separator(", ").print(a, b, s, t);
 }
