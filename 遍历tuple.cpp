@@ -28,19 +28,19 @@ std::ostream& operator<<(std::ostream& os, const std::tuple<Args...>& t) {
 
 template <std::size_t I, typename... Args>
 typename std::enable_if<(I + 1 == sizeof...(Args)), std::ostream&>::type
-_tuple_print(std::ostream& os, std::tuple<Args...>& t) {
+_tuple_print(std::ostream& os, const std::tuple<Args...>& t) {
     return os << std::get<I>(t);
 }
 
 template <std::size_t I, typename... Args>
 typename std::enable_if<(I + 1 < sizeof...(Args)), std::ostream&>::type
-_tuple_print(std::ostream& os, std::tuple<Args...>& t) {
+_tuple_print(std::ostream& os, const std::tuple<Args...>& t) {
     os << std::get<I>(t) << ", ";
     return _tuple_print<I + 1, Args...>(os, t);
 }
 
 template <typename... Args>
-std::ostream& operator<<(std::ostream& os, std::tuple<Args...>& t) {
+std::ostream& operator<<(std::ostream& os, const std::tuple<Args...>& t) {
     os << "(";
     if (sizeof...(Args)) _tuple_print<0, Args...>(os, t);
     os << ")";
@@ -50,7 +50,7 @@ std::ostream& operator<<(std::ostream& os, std::tuple<Args...>& t) {
 // 方法3
 
 template <std::size_t I, typename... Args>
-std::ostream& _tuple_print(std::ostream& os, std::tuple<Args...>& t) {
+std::ostream& _tuple_print(std::ostream& os, const std::tuple<Args...>& t) {
     os << std::get<I>(t) << (I + 1 < sizeof...(Args) ? ", " : "");
     if constexpr (I + 1 < sizeof...(Args))  // if constexpr: since c++17
         _tuple_print<I + 1, Args...>(os, t);
@@ -58,7 +58,7 @@ std::ostream& _tuple_print(std::ostream& os, std::tuple<Args...>& t) {
 }
 
 template <typename... Args>
-std::ostream& operator<<(std::ostream& os, std::tuple<Args...>& t) {
+std::ostream& operator<<(std::ostream& os, const std::tuple<Args...>& t) {
     os << "(";
     if (sizeof...(Args)) _tuple_print<0, Args...>(os, t);
     os << ")";
