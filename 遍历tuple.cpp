@@ -1,3 +1,4 @@
+//三种方法为tuple重载<<
 //方法1
 
 template <typename Tuple, std::size_t N>
@@ -49,10 +50,9 @@ std::ostream& operator<<(std::ostream& os, std::tuple<Args...>& t) {
 // 方法3
 
 template <std::size_t I, typename... Args>
-std::ostream& _tuple_print(std::ostream&, std::tuple<Tp...>& t) {
-    if (I < sizeof...(Args))
-        os << ", " << std::get<I>(t);
-    if constexpr (I + 1 != sizeof...(Args)) // if constexpr: since c++17
+std::ostream& _tuple_print(std::ostream& os, std::tuple<Args...>& t) {
+    os << std::get<I>(t) << (I + 1 < sizeof...(Args) ? ", " : "");
+    if constexpr (I + 1 < sizeof...(Args))  // if constexpr: since c++17
         _tuple_print<I + 1, Args...>(os, t);
     return os;
 }
@@ -60,10 +60,7 @@ std::ostream& _tuple_print(std::ostream&, std::tuple<Tp...>& t) {
 template <typename... Args>
 std::ostream& operator<<(std::ostream& os, std::tuple<Args...>& t) {
     os << "(";
-    if (sizeof...(Args)) {
-        os << std::get<0>(t);
-        _tuple_print<1, Args...>(os, t);
-    }
+    if (sizeof...(Args)) _tuple_print<0, Args...>(os, t);
     os << ")";
     return os;
 }
