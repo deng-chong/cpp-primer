@@ -19,25 +19,17 @@ class Printer {
 
     template <typename... Args>
     void print(const Args&... args) const {
-        _print(args...);
+        _tuple_print(std::cout,
+                     std::make_tuple(args...),
+                     std::make_index_sequence<sizeof...(Args)>());
     }
 
    private:
     std::string sep, end;
 
-    void _print() const {  // 必须有，否则下面的_print在实参包大小为零时没有可调用函数，编译错误
-        std::cout << end;
-    }
-
-    template <typename T, typename... Args>
-    void _print(const T& t, const Args&... args) const {
-        auto n = sizeof...(args);
-        if (!n) {
-            std::cout << t << end;
-        } else {
-            std::cout << t << sep;
-            _print(args...);
-        }
+    template <typename Tuple, std::size_t... Is>
+    constexpr void _tuple_print(std::ostream& os, const Tuple& t, std::index_sequence<Is...>) const {
+        ((os << std::get<Is>(t) << (Is + 1 < sizeof...(Is) ? sep : end)), ...);
     }
 };
 
