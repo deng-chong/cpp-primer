@@ -65,25 +65,15 @@ std::ostream& operator<<(std::ostream& os, const std::pair<T, U>& p) {
     return os << "(" << p.first << ", " << p.second << ")";
 }
 
-template <typename Tuple, std::size_t N>
-struct TuplePrinter {
-    static std::ostream& print(std::ostream& os, const Tuple& t) {
-        return TuplePrinter<Tuple, N - 1>::print(os, t) << ", " << std::get<N - 1>(t);
-    }
-};
-
-template <typename Tuple>
-struct TuplePrinter<Tuple, 1> {
-    static std::ostream& print(std::ostream& os, const Tuple& t) {
-        return os << std::get<0>(t);
-    }
-};
+template <typename Tuple, std::size_t... Is>
+constexpr void _tuple_print(std::ostream& os, const Tuple &t, std::index_sequence<Is...>) {
+    ((os << std::get<Is>(t) << (Is + 1 < sizeof...(Is) ? ", " : "")), ...);
+}
 
 template <typename... Args>
 std::ostream& operator<<(std::ostream& os, const std::tuple<Args...>& t) {
     os << "(";
-    constexpr std::size_t N = sizeof...(Args);
-    if (N) TuplePrinter<decltype(t), N>::print(os, t);
+    _tuple_print(os, t, std::make_index_sequence<sizeof...(Args)>());
     os << ")";
     return os;
 }
